@@ -1,0 +1,78 @@
+# Interval setting
+discriminator_train_start_steps: 0    # Number of steps to start to train discriminator.
+train_max_steps: 500000               # Number of pre-training steps.
+save_interval_steps: 100000           # Interval steps to save checkpoint.
+eval_interval_steps: 2000             # Interval steps to evaluate the network.
+log_interval_steps: 2000              # Interval steps to record the training log.
+resume:                               # Epoch to resume training.
+
+# Loss balancing coefficients.
+lambda_pianoroll: 0  # TODO: pianoroll conditioning
+
+# Mel-spectral loss setting
+pianoroll_loss:
+  _target_: conditional_musegan.losses.PianorollDistanceLoss
+  loss_type: l2
+
+# Adversarial loss setting
+adv_loss:
+  _target_: conditional_musegan.losses.AdversarialLoss
+  average_by_discriminators: false  # Whether to average loss by #discriminators.
+  loss_type: mse
+
+lambda_gradient_penalty: 10
+
+gradient_penalty_loss:
+  _target_: conditional_musegan.losses.GradientPenaltyLoss
+
+# Feature matching loss setting
+# fm_loss:
+#   _target_: sifigan.losses.FeatureMatchLoss
+#   average_by_layers: false  # Whether to average loss by #layers in each discriminator.
+
+# Optimizer and scheduler setting
+generator_optimizer:
+  _target_: torch.optim.Adam
+  lr: 2.0e-4
+  betas: [0.5, 0.9]
+  weight_decay: 0.0
+generator_scheduler:
+  _target_: torch.optim.lr_scheduler.MultiStepLR
+  gamma: 0.5
+  milestones:
+    - 100000
+    - 200000
+    - 300000
+    - 400000
+generator_grad_norm: 0
+discriminator_optimizer:
+  _target_: torch.optim.Adam
+  lr: 2.0e-4
+  betas: [0.5, 0.9]
+  weight_decay: 0.0
+discriminator_scheduler:
+  _target_: torch.optim.lr_scheduler.MultiStepLR
+  gamma: 0.5
+  milestones:
+    - 100000
+    - 200000
+    - 300000
+    - 400000
+discriminator_grad_norm: 0
+
+# Sampling
+sample_grid: [8, 8]
+save_array_samples: true
+save_image_samples: true
+save_pianoroll_samples: true
+midi:
+  lowest_pitch: 24 # the lowest pitch of the piano-rolls
+  programs: [0, 0, 25, 33, 48]
+  is_drums: [1, 0, 0, 0, 0]
+  tempo: 100 # in bpm
+colormap:
+  - [1., 0., 0.]
+  - [1., .5, 0.]
+  - [0., 1., 0.]
+  - [0., 0., 1.]
+  - [0., .5, 1.]

@@ -1,0 +1,5 @@
+_target_: conditional_musegan.models.MuseganDiscriminator
+n_tracks: 5
+n_measures: 4
+measure_resolution: 16
+n_pitches: 72
